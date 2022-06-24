@@ -1,0 +1,273 @@
+(function ($) {
+		$.fn.stickify = function (options) {
+
+		var settings      = $.extend({}, {
+				offsetTop           : 10,
+				offsetBottom        : 0,
+				// Jquery limit selector by default
+				limitSelector       : 'footer.footer',
+				// Numeric value to use as sticky limit, overloads limitSelector
+				limitPosition       : 0,
+				zIndex              : 100,
+				// Dom selector in case we want to assign an specific init
+				initSelector        : undefined,
+				// Use in case of emergency
+				limitOffsetOverload : 0,
+				// Class added when the element has fixed position
+				stickedLabel        : 'pb-sticked',
+				// Class added only at the bottom, when reaching the limitSelector offset
+				bottomLabel         : 'pb-at-bottom',
+				containerSelector   : document,
+				innerScroll         : false,
+				useRelativeLimit    : false,
+				remove              : false
+			}, options),
+
+			$win          = $(window),
+			currentScroll = 0;
+
+		// Iterates throught the set of elements found with our jquery selector.
+		return this.each(function () {
+			var $el                = $(this),
+				$parent            = $el.parent(),
+				innerScrollDiff    = 0,
+				innerScrollLimit   = 0,
+				innerScrollStopped = false,
+				windowHeight,
+				itemHeight,
+
+				/**
+				* Returns true/false in case of having a footer limit reached by
+				* the vertical position sent in the parameters.
+				*
+				* @param  {Number} position
+				* @param  {Number} height
+				* @param  {Number} limit
+				* @return {Boolean}
+				*/
+				isLowerLimitReached = function (position, height, limit) {
+					var limitOn = false;
+
+					if (limit === undefined ||
+						(position + height + settings.offsetTop) <= limit) {
+						limitOn = true;
+					}
+
+					return limitOn;
+				},
+
+				/**
+				* Returns the DOM element that will initiate the sticky effect when
+				* the vertical scroll is reached in it's top offset.
+				* If no selector is defined, this function will create an empty
+				* div to serve to this purpose.
+				*
+				* @returns {Object} Jquery Object with selected DOM.
+				*/
+				setInitMarker = function () {
+					var $dom;
+
+					if ($el.data('init-selector') !== undefined) {
+						$dom = $el.data('init-selector');
+					} else if (settings.initSelector !== undefined) {
+						$dom = $(settings.initSelector);
+					} else {
+						// Helper to be placed before the sticky element.
+						$dom = $('<div>', {
+							class: 'sticky-init'
+						});
+						$el.before($dom);
+					}
+
+					$el.data('init-selector', $dom);
+
+					return $dom;
+				},
+
+				/**
+				* Returns the jquery object of the sticky limit.
+				* If not, returns an undefined variable.
+				*
+				* @param  {string} limit Jquery selector string.
+				* @return {Object}       Jquery Object with selected DOM.
+				*/
+				getBottomLimitDom = function (limit) {
+					var $dom;
+
+					if (limit.length > 0) {
+						$dom = $(limit);
+					}
+
+					return $dom;
+				},
+
+				/**
+				* In case Inner Scrolling for Sticky element is true, this
+				* function is in charge of keeping track of the current scroll
+				* direction and vertical scroll value.
+				* It will return the vertical value of WHERE the sticky element
+				* will start being active. If we do NOT have inner scroll active,
+				* the vertical value entered in the parameters will be returned
+				* unchanged.
+				* If inner scroll is active the current vertical value will be
+				* modified with the Y value necessary to achieve an inner scrolling
+				* along the sticky element height.
+				*
+				* @param  {Number} verticalValue  Position where sticky element will start
+				* sticky behaviour.
+				* @param  {Boolean} useInnerScroll Do we want to use innerscroll?
+				* @return {Number} Position where sticky element will start (modified)
+				*/
+				applyInnerScroll = function (verticalValue, useInnerScroll) {
+					if (useInnerScroll === true) {
+
+						// Gets the browser height
+						windowHeight = $win.height();
+						// Gets sticky element + the top offset
+						itemHeight   = $el.height() + settings.offsetTop;
+
+						// Only when the sticky element is larger than the browser
+						if (itemHeight > windowHeight) {
+							var heightCalc   = $win.scrollTop() - currentScroll;
+							// Update our inner scroll limit value
+							innerScrollLimit = itemHeight - windowHeight;
+
+							// Only when sticky element reached it's limit
+							if ($win.scrollTop() > currentScroll &&
+								innerScrollStopped === true) {
+								innerScrollDiff -= heightCalc;
+							} else {
+								// Runs during sticky fixed state to add inner scroll
+								// variation
+								innerScrollDiff += heightCalc;
+							}
+
+							if (innerScrollDiff > innerScrollLimit) {
+								innerScrollDiff = innerScrollLimit;
+							} else if (innerScrollDiff < 0) {
+								innerScrollDiff = 0;
+							}
+
+							currentScroll = $win.scrollTop();
+
+							verticalValue += innerScrollDiff;
+						}
+					}
+
+					return verticalValue;
+				},
+
+				scrollHandler = function () {
+					var containerHeight  = $container.height(),
+						verticalPosition = $document.scrollTop(),
+						// Sticky element height (bottom offset included)
+						elementHeight    = $el.height() + settings.offsetBottom,
+						// Vertical Position where Sticky will start
+						stickyStart      = $posHelper.offset().top - settings.offsetTop,
+						// Vertical Position where Sticky will stop
+						stickyStop;
+
+					if (containerHeight < elementHeight) {
+						return;
+					}
+
+					if ($limit !== undefined && $limit.length > 0) {
+						stickyStop = $limit.offset().top;
+					}
+
+					// Vertical offset with inner scrolling modifier applied
+					stickyStart = applyInnerScroll(stickyStart, settings.innerScroll);
+					// Set innerscroll to false before checking sticky element state
+					innerScrollStopped = false;
+
+					if (settings.limitPosition > 0 &&
+						(stickyStop === undefined ||
+							$el.height() + settings.limitPosition < stickyStop)) {
+						stickyStop = $el.height() + settings.limitPosition +
+							stickyStart + settings.offsetTop;
+					}
+
+					// Element is STICKIED
+					if ((verticalPosition >= stickyStart) &&
+						isLowerLimitReached(verticalPosition, elementHeight, stickyStop)) {
+						$el.css({
+							position  : 'fixed',
+							top       : settings.offsetTop - innerScrollDiff,
+							bottom    : 'auto',
+							'z-index' : settings.zIndex
+						}).addClass(settings.stickedLabel)
+							.removeClass(settings.bottomLabel);
+					} else {
+						// Element reached BOTTOM
+						if (!isLowerLimitReached(verticalPosition, elementHeight, stickyStop)) {
+							innerScrollStopped = true;
+							var parentTop = offsets = 0;
+							if (settings.useRelativeLimit) {
+								parentTop = $parent.position().top;
+								offsets = settings.offsetTop + settings.offsetBottom;
+							}
+							$el.css({
+								position  : 'absolute',
+								top       : stickyStop - parentTop - offsets - elementHeight +
+									settings.limitOffsetOverload - innerScrollDiff,
+								bottom    : 'auto',
+								'z-index' : 'auto'
+							}).addClass(settings.stickedLabel)
+								.addClass(settings.bottomLabel);
+						} else {
+							// Element is above helper, no sticky applied
+							$el.css({
+								position  : 'relative',
+								top       : 'auto',
+								bottom    : 'auto',
+								'z-index' : 'auto'
+							}).removeClass(settings.stickedLabel)
+								.removeClass(settings.bottomLabel);
+						}
+					}
+				},
+
+				$document  = $(document),
+				$container = $(settings.containerSelector),
+
+				// Set initial point (helper) where Stickify starts
+				$posHelper = setInitMarker(),
+				// Sets bottom limit where Sticky ends
+				$limit     = getBottomLimitDom(settings.limitSelector);
+
+			// In case we want to simply remove all stickify behaviour
+			if (settings.remove) {
+				$el.css({
+					position  : 'relative',
+					top       : 'auto',
+					bottom    : 'auto',
+					'z-index' : 'auto'
+				}).removeClass(settings.stickedLabel)
+					.removeClass(settings.bottomLabel);
+
+				if ($el.data('init-selector').html().length == 0) {
+					$el.data('init-selector').remove();
+					$el.removeData('init-selector');
+				}
+
+				$win.off('scroll', $el.data('scroll-handler'));
+				return;
+			}
+
+			// In case we have a scroll event listener, we remove it
+			if ($el.data('scroll-handler') !== undefined) {
+				$win.off('scroll', $el.data('scroll-handler'));
+			}
+
+			// Assign scroll event function to data value of sticky element
+			$el.data('scroll-handler', scrollHandler);
+
+			// Setup event listener with out scroll event function
+			$win.on('scroll', $el.data('scroll-handler'));
+
+			// First run of scroll event function, just to start it without
+			// need of a scroll
+			scrollHandler();
+		});
+	};
+}(jQuery));

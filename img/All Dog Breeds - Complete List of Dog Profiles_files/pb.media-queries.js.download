@@ -1,0 +1,16 @@
+(function (win) {
+
+	'use strict';
+
+	var Modernizr = win.Modernizr,
+		PB        = win.PB || {};
+
+	PB.MQ = new PB.MediaQuery({
+		'mobile'  : 'only screen and (max-width: 749px)',
+		'tablet'  : 'only screen and (min-width: 750px) and (max-width: 979px)',
+        'desktop' : 'only screen and (min-width: 980px)'
+	});
+
+	win.PB = PB;
+
+}(window));

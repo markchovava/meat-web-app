@@ -1,0 +1,100 @@
+/*------ autocomplete styles -----*/ body .holdResults._siq_main_searchbox ul li.sectionHead h3{ font-family:"Quicksand", sans-serif !important; font-weight:700 !important; font-size:12px !important; color:#8a8a8a !important; border-bottom:1px solid #E3E3E3 !important; padding-bottom:2px !important; } 
+body .holdResults._siq_main_searchbox ul li.highlighted a, body .holdResults._siq_main_searchbox ul li a:hover{ background:#eaeaea !important; } 
+body .holdResults._siq_main_searchbox ul .siq-powered-by{ color:#9a9a9a !important; } 
+body .holdResults._siq_main_searchbox ul .siq-powered-by a{ color:#464646 !important; } 
+body ._siq_main_searchbox .siq_resultLeft.no-image:before{ display:none !important; } 
+body ._siq_main_searchbox .siq_resultLeft.no-image .no-img{ background:#fff url("//cdn1.searchiq.co/logo/large/dogtime-thumbnail.png") no-repeat center center !important; background-size:100% !important; } 
+body .holdResults._siq_main_searchbox ul li a h3, body .holdResults._siq_main_searchbox ul li a em{ font-family:"Quicksand", sans-serif !important; font-size:13px !important; font-weight:700 !important; line-height:15px !important; color:#000 !important; max-height:32px !important; overflow:hidden !important; } 
+body .holdResults._siq_main_searchbox ul li a p{ padding-top:0 !important; font-family:"Quicksand", sans-serif !important; font-size:12px !important; font-weight:400 !important; color:#E21D23 !important; } 
+body .holdResults._siq_main_searchbox ul li a em{ color:#E21D23 !important; background-color:transparent !important; display:inline !important; } 
+body .holdResults._siq_main_searchbox ul li:hover, body .holdResults._siq_main_searchbox ul li.highlighted{ background-color:transparent !important; } 
+.holdResults._siq_main_searchbox ul li.highlighted a h3, .holdResults._siq_main_searchbox ul li:hover a h3{ font-family:"Quicksand", sans-serif!important; font-size:13px !important; font-weight:700 !important; line-height:15px !important; } 
+.holdResults._siq_main_searchbox ul li.highlighted a em, .holdResults._siq_main_searchbox ul li:hover a em{ color:#E21D23 !important; background-color:transparent !important; font-size:13px !important; } 
+body .holdResults._siq_main_searchbox ul{ padding:0 !important; } 
+body .holdResults._siq_main_searchbox ul li.sectionHead{ padding:5px 10px 0 !important; } 
+body .holdResults._siq_main_searchbox ul{ border:1px solid #e0e0e0 !important; border-radius:0 !important; margin-top:5px !important; } 
+body .holdResults._siq_main_searchbox .topArrow{ display:none !important; } 
+body .holdResults._siq_main_searchbox ul li .resultsMore{ border-top:1px solid #E3E3E3 !important; color:#E21D23 !important; font-family:"Quicksand", sans-serif !important; font-weight:700 !important; font-size:13px !important; } 
+body .holdResults._siq_main_searchbox ul li.highlighted .siq_resultLeft.no-image .no-img, body .holdResults._siq_main_searchbox ul li:hover .siq_resultLeft.no-image .no-img{ background-color:#fff !important; } 
+body .holdResults._siq_main_searchbox ul li .resultsMore:hover{ border-top:1px solid #E3E3E3 !important; color:#000 !important; background-color:#fff !important; font-family:"Quicksand", sans-serif !important; font-weight:700 !important; font-size:13px !important; } 
+body ._siq_main_searchbox .siq_resultLeft.has-image.crop img{ border-radius:2px !important; } 
+body .holdResults._siq_main_searchbox ul .siq-powered-by a:hover{ background:transparent !important; } 
+body #siq_search_results{ width:100% !important; padding:0 !important; } 
+body #siq_search_results .siq_searchInner{ padding:5px !important; background:#d9d8d4 !important; border-radius:2px !important; } 
+body #siq_search_results .search-results-L img{ max-width:100% !important; max-height:100% !important; margin:0 auto !important; border:0 !important; padding:0 !important; background:initial !important; border-radius:0 !important; display:block !important; } 
+body #siq_search_results .siq_searchForm .siq_searchWrapper .siq_searchTop .siq_searchInner .siq_searchBox{ font-family:"Quicksand", sans-serif !important; font-weight:700 !important; vertical-align:top !important; font-size:16px !important; background-color:#fff !important; border:0 !important; background-image:none !important; padding-left:10px !important; padding-bottom:10px !important; border-radius:3px !important; box-shadow:none !important; } 
+body #siq_search_results .siq_searchForm .siq_searchWrapper .siq_searchTop .siq_searchInner .siq_searchBox::placeholder{ font-size:16px !important; color:#b5b5b5 !important; font-family:"Quicksand", sans-serif !important; font-weight:700 !important; text-transform:none !important; } 
+body #siq_search_results .srch-poweredbysiq div{ padding:19px 15px 0 0 !important; color:#717171 !important; } 
+body #siq_search_results .srch-poweredbysiq a{ color:#000 !important; } 
+body #siq_search_results .no-image:before{ display:none !important; } 
+body #siq_search_results .search-results-L.no-image img{ visibility:hidden !important; } 
+body #siq_search_results .search-results-L.no-image{ background:#fff url("//cdn1.searchiq.co/logo/large/dogtime-thumbnail.png") center center no-repeat !important; background-size:100% !important; } 
+body #siq_search_results .search-results-R div.search-results-title a{ font:700 18px/24px "Quicksand", sans-serif !important; color:#2B2B2B !important; line-height:26px !important; } 
+body #siq_search_results .search-results-R div.search-results-title a:hover{ color:#E21D23 !important; text-decoration:none !important; transition:all 0.5s ease !important; } 
+body #siq_search_results .search-results-R div.search-results-title{ line-height:18px !important; position:relative !important; padding:0 15px 0 0 !important; max-height:52px !important; overflow:hidden !important; } 
+body #siq_search_results .siq-show-result div{ font-family:"Quicksand", sans-serif !important; font-weight:700 !important; font-size:13px !important; color:#505050 !important; } 
+body #siq_search_results .siq-show-result div span{ font-family:"Quicksand", sans-serif !important; font-size:14px !important; color:#000 !important; font-weight:700 !important; } 
+body #siq_search_results .search-results-R div.sr-R-author{ font:14px/14px "Quicksand", sans-serif !important; text-transform:capitalize !important; color:#E21D23 !important; -webkit-font-smoothing:initial !important; -moz-osx-font-smoothing:initial !important; } 
+body #siq_search_results table.siq_data_table td.contentTd span.siq-domain-name{ font:14px/16px "Quicksand", sans-serif !important; font-weight:400 !important; color:#000 !important; } 
+body #siq_search_results .search-results-R .sr-R-categories ul li{ font-family:"Quicksand", sans-serif !important; font-weight:400 !important; font-size:11px !important; text-transform:uppercase !important; color:#fff !important; border:none !important; border-radius:0 !important; background-color:#2B2B2B !important; line-height:16px !important; padding:3px 7px 2px !important; margin:0 3px 0 0 !important; -webkit-font-smoothing:initial !important; -moz-osx-font-smoothing:initial !important; } 
+body #siq_search_results .search-results-R .sr-R-tags ul li{ font:14px/16px "Quicksand", sans-serif !important; background-position:left 3px !important; -webkit-font-smoothing:auto !important; -moz-osx-font-smoothing:auto !important; } 
+body #siq_search_results .siq-sort-results ul li a{ font-family:"Quicksand", arial, sans-serif !important; font-weight:700 !important; font-size:14px !important; color:#000 !important; } 
+body #siq_search_results .siq-sort-results ul li a:hover{ color:#E21D23 !important; } 
+body #siq_search_results .siq-sort-results ul li.selected a{ color:#E21D23 !important; } 
+body #siq_search_results .search-results-row, body #siq_search_results .search-sponsored-row{ padding:12px !important; border-top:none !important; border-bottom:0 !important; margin:0 0 15px 0 !important; } 
+body #siq_search_results .search-results-R .sr-R-cont div, body #siq_search_results .siq-ads .srch-sponsored-R-cont p{ color:#000 !important; font:400 18px/23px "Quicksand", sans-serif !important; margin:5px 0 0 !important; -webkit-font-smoothing:initial !important; -moz-osx-font-smoothing:initial !important; } 
+body #siq_search_results .search-results-R .sr-R-cont div em{ background-color:transparent !important; color:#444 !important; font-weight:400 !important; } 
+body #siq_search_results ._siq_pagination span.current{ background-color:#E21D23 !important; color:#fcf6f0 !important; min-width:35px !important; border:none !important; font-family:"Quicksand", sans-serif !important; font-weight:700 !important; } 
+body #siq_search_results ._siq_pagination a, body #siq_search_results ._siq_pagination span{ font-family:"Quicksand", sans-serif !important; padding:5px 10px !important; font-weight:700 !important; background-color:#fff !important; color:#130e0d !important; border:none !important; margin:0 5px !important; font-size:14px !important; line-height:25px !important; min-width:35px !important; vertical-align:bottom !important; } 
+body #siq_search_results ._siq_pagination span.disabled{ font-size:12px !important; width:auto !important; color:#cccccc !important; background-color:transparent !important; font-family:"Quicksand", sans-serif !important; border-color:#dedede !important; text-transform:uppercase !important; font-weight:700 !important; } 
+body #siq_search_results ._siq_pagination a.active.next, body #siq_search_results ._siq_pagination a.active.prev{ font-family:"Quicksand", sans-serif !important; background-color:#2B2B2B !important; color:#fcf6f0 !important; width:auto !important; font-size:12px !important; text-transform:uppercase !important; font-weight:700 !important; } 
+body #siq_search_results ._siq_pagination a:hover{ background-color:#E21D23 !important; color:#fff !important; } 
+body #siq_search_results ._siq_pagination a.active.next:hover, body #siq_search_results ._siq_pagination a.active.prev:hover{ color:#fff !important; background:#E21D23 !important; } 
+body #siq_search_results .search-results-R div.search-results-title a em{ color:inherit !important; background-color:transparent !important; } 
+body #siq_search_results table.siq_data_table td.imageTd{ width:240px !important; } 
+body #siq_search_results .search-results-L{ width:253px !important; min-height:160px !important; height:160px !important; min-width:253px !important; } 
+body #siq_search_results .search-results-L img{ max-height:100% !important; } 
+body #siq_search_results .search-results-R .sr-R-cont{ height:inherit !important; } 
+body #siq_search_results .search-results-R .srch-res-info{ margin-top:0 !important; } 
+body #siq_search_results .siq-show-result{ padding-top:10px !important; } 
+body #siq_search_results .siq_filters{ padding-top:10px !important; } 
+body #siq_search_results .search-results-R .sr-R-tags{ margin-top:0 !important; } 
+body #siq_search_results .siq_search_box{ margin-bottom:15px !important; } 
+@media (min-width:768px) and (max-width:991px) { 
+body #siq_search_results .search-results-R .sr-R-cont div, body #siq_search_results .siq-ads .srch-sponsored-R-cont p{ font:400 16px/21px "Quicksand", sans-serif !important; } 
+} 
+@media (min-width:481px) and (max-width:767px) { 
+body #siq_search_results .search-results-L{ width:180px !important; min-height:inherit !important; min-width:inherit !important; } 
+body #siq_search_results .search-results-R div.search-results-title a{ font-size:20px !important; line-height:24px !important; } 
+body #siq_search_results .search-results-R div.search-results-title{ line-height:20px !important; max-height:48px !important; overflow:hidden !important; } 
+body #siq_search_results .search-results-R .sr-R-cont div, body #siq_search_results .siq-ads .srch-sponsored-R-cont p{ line-height:20px !important; font-size:.9em !important; } 
+body #siq_search_results .search-results-row, body #siq_search_results .search-sponsored-row{ padding:5px 0 !important; } 
+body #siq_search_results .search-results-R .sr-R-cont{ height:inherit !important; } 
+body #siq_search_results table.siq_data_table td.contentTd span.siq-domain-name{ display:none !important; } 
+} 
+@media (max-width:480px) { 
+body #siq_search_results table.siq_data_table td.contentTd span.siq-domain-name{ display:none !important; } 
+body #siq_search_results .siq_filters{ padding-top:5px !important; } 
+body #siq_search_results .siq_search_box{ margin:0 auto 10px auto !important; } 
+body #siq_search_results .search-results-L.no-image{ height:60px !important; } 
+body #siq_search_results .siq-show-result{ padding-top:10px !important; padding-bottom:5px !important; } 
+body #siq_search_results .search-results-L{ width:94px !important; min-height:inherit !important; height:inherit !important; margin-right:10px !important; min-width:inherit !important; } 
+body #siq_search_results .search-results-R div.search-results-title{ margin:0 !important; max-height:35px !important; overflow:hidden !important; line-height:16px !important; } 
+body #siq_search_results .search-results-R div.search-results-title a{ line-height:14px !important; font-size:14px !important; } 
+body #siq_search_results .search-results-R div.sr-R-author{ font-size:12px !important; } 
+body #siq_search_results .srch-det-arrow{ right:0% !important; } 
+body #siq_search_results ._siq_pagination a, body #siq_search_results ._siq_pagination span{ padding:3px 5px !important; font-size:11px !important; width:auto !important; line-height:18px !important; min-width:inherit !important; } 
+body #siq_search_results ._siq_pagination span.current{ padding:3px 5px !important; font-size:11px !important; min-width:20px !important; } 
+body #siq_search_results ._siq_pagination a.active.next, body #siq_search_results ._siq_pagination a.active.prev{ font-size:11px !important; } 
+body #siq_search_results ._siq_pagination span.disabled{ font-size:11px !important; } 
+body #siq_search_results .search-results-row, body #siq_search_results .search-sponsored-row{ padding:10px 0 !important; margin:0 0 8px 0 !important; } 
+body #siq_search_results .img-responsive{ background-size:9px !important; background:url("//stg.dogtime.com/assets/uploads/2019/04/detail-arrow.png") no-repeat right top!important; } 
+body #siq_search_results .siq_searchForm .siq_searchWrapper .siq_searchTop .siq_searchInner .siq_searchBox{ height:36px !important; padding-left:10px !important; } 
+body #siq_search_results .siq-sort-results{ margin-top:0px !important; } 
+} 
+body #siq_search_results .siq-ads .srch-sponsoredtitle:after {color: #000 !important;left: 0!important;top: -20px!important;}
+body #siq_search_results .search-sponsored-row{padding: 40px 0 20px !important;}
+body .holdResults._siq_main_searchbox ul li p {
+    display: none !important;
+}
+body .holdResults._siq_main_searchbox ul li.siq-autocomplete-sponsored p { display: block !important; color: black !important;}

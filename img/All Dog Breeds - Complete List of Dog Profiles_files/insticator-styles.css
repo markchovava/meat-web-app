@@ -1,0 +1,8 @@
+.insticator-ads {
+    width: 800px!important;
+    justify-content: left!important;
+}
+
+.insticator-unit.type-commenting .insticator-ads > div {
+    margin: 0px!important;
+}

@@ -1,0 +1,25 @@
+(function (win) {
+    'use strict';
+
+    var PB = win.PB;
+
+    $(function () {
+        var noStickyClass = 'pb-no-sticky-leaderboard';
+
+        // Header navigation behavior script here
+        PB.Core.start('header-nav');
+
+        if (!PB.MQ.isMobile()) {
+            if ($('.js-pb-sticky-leaderboard').length) {
+                PB.Core.start('billboard-close-button', {
+                    'noStickyClass' : noStickyClass
+                });
+            } else {
+                $('body').addClass(noStickyClass);
+                $(win).trigger('body-change');
+            }
+        }
+
+    });
+
+}(window));

@@ -1,0 +1,16 @@
+(function (win) {
+    'use strict';
+
+    var $           = win.jQuery,
+        PB          = win.PB;
+
+    PB.Core.register('resize-iframe', function () {
+        return {
+            init: function (opts) {
+                $('#' + opts.adDiv).on('resize', function () {
+                    $(this).find('iframe[id*="' + opts.adUnit + '"]').attr('width', '100%');
+                });
+            },
+        };
+    });
+}(window));

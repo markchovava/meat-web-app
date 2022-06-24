@@ -1,0 +1,218 @@
+.cp:before, .cp-carousel-item:before,
+.cp:after,
+.cp-carousel-item:after {
+  content: " ";
+  display: table;
+}
+
+.cp:after, .cp-carousel-item:after {
+  clear: both;
+}
+
+.cp, .cp-carousel-item {
+  *zoom: 1;
+}
+
+.cp {
+  font-size: 12px;
+  margin: 0 auto;
+  width: 970px;
+  position: relative;
+}
+
+.cp-main {
+  float: left;
+  max-width: 642px;
+  width: 100%;
+  position: relative;
+  height: 360px;
+  background: #000;
+  overflow: hidden;
+}
+
+.cp-main-item {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  opacity: 0;
+  position: absolute;
+  z-index: 1;
+  overflow: hidden;
+  height: 360px;
+  width: 642px;
+}
+
+.cp-main-active {
+  z-index: 10;
+}
+
+.cp-main-caption {
+  position: absolute;
+  -webkit-transition: bottom 0.3s;
+  -moz-transition: bottom 0.3s;
+  -o-transition: bottom 0.3s;
+  transition: bottom 0.3s;
+  padding: 0 15px;
+  background: #29343A;
+  width: 631px;
+}
+
+.lt-ie8 .cp-main-caption {
+  left: 0;
+}
+
+.no-js .cp-main-caption {
+  bottom: 0;
+}
+
+.cp-main-caption-active {
+  bottom: 0;
+  -webkit-transition: bottom 0.3s;
+  -moz-transition: bottom 0.3s;
+  -o-transition: bottom 0.3s;
+  transition: bottom 0.3s;
+}
+
+.cp-loading-overlay {
+  position: absolute;
+  left: 0;
+  z-index: 15;
+  display: none;
+  width: 100%;
+  height: 100%;
+  background: black;
+}
+
+.cp-loading-icon {
+  position: absolute;
+  top: 170px;
+  left: 375px;
+  width: 220px;
+  height: 19px;
+  background: white;
+  background: url('../img/cp-loader.gif') no-repeat;
+}
+
+.cp-carousel {
+  position: relative;
+  float: right;
+  width: 327px;
+  height: 360px;
+  overflow: hidden;
+}
+
+.lt-ie8 .cp-carousel {
+  z-index: 10;
+}
+
+.cp-carousel-items {
+  position: absolute;
+  z-index: 1;
+  display: none;
+  overflow: visible;
+  width: 362px;
+  height: auto;
+}
+
+.cp-carousel-item {
+  display: block;
+  text-decoration: none;
+  position: relative;
+  padding: 4px;
+  color: white;
+  height: 66px;
+  border-bottom: 1px solid white;
+}
+
+.cp-carousel-item-selected {
+  background: #0041fd;
+}
+
+.cp-carousel-item-thumb {
+  max-height: 66px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.cp-carousel-item-title {
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  zoom: 1;
+  *display: inline;
+  width: 135px;
+}
+.lt-ie8 .cp-carousel-item-title {
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.cp-down-wrapper {
+  position: absolute;
+  bottom: -45px;
+  left: 115px;
+  width: 70px;
+  height: 80px;
+  border: 1px solid #0045e1;
+  border-radius: 50%;
+  background: darkBlue;
+  cursor: pointer;
+}
+
+.cp-down-button {
+  position: absolute;
+  top: 15px;
+  left: 22px;
+  width: 23px;
+  height: 13px;
+  border: none;
+  background: url(../img/cp-arrow-down.png);
+  text-indent: -9999px;
+  direction: ltr;
+}
+.lt-ie9 .cp-down-button {
+  filter: inherit;
+}
+
+.cp-up-wrapper {
+  left: 115px;
+  position: absolute;
+  top: -45px;
+  cursor: pointer;
+  height: 80px;
+  width: 70px;
+  border-radius: 50%;
+  border: 1px solid #0045e1;
+  background: darkBlue;
+}
+
+.cp-up-button {
+  position: absolute;
+  bottom: 15px;
+  left: 22px;
+  width: 23px;
+  height: 13px;
+  border: none;
+  background: url(../img/cp-arrow-up.png);
+  text-indent: -9999px;
+  direction: ltr;
+}
+
+.lt-ie9 .cp-up-button {
+  filter: inherit;
+}
+
+/* FOUC fix on hoopsvibe */
+.cp-main-source {
+  display: block;
+  text-align: center;
+  line-height: 360px;
+}
+
+.cp-main-item-media {
+  max-height: 362px;
+  max-width: 642px;
+
+  /* fighting plugin styles */
+  width: auto !important;
+  height: auto !important;
+}

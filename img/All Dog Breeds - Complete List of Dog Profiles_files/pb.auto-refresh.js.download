@@ -1,0 +1,47 @@
+/* jshint maxparams: 4 */
+(function (win) {
+    if (typeof readAdmiralCookie === "function"){
+        admiral_status = readAdmiralCookie();
+    }
+    if (typeof getAdmiral === "function"){
+        admiral_status = getAdmiral("admiral_status");
+    }
+    if ('undefined' === typeof admiral_status || true !== admiral_status) {
+
+        var $            = win.jQuery,
+            PB           = win.PB || {},
+            timeInterval = gptRefreshTimer;
+
+        window.setInterval(function () {
+            //check if auto_refresh_sra checkbox is checked
+            if (PB.gptRefreshSRA || PB.gptRefreshSSAds || PB.gptRefreshListicleAds) {
+                var toRefresh = [];
+
+                //get all sra ads and add them to an array
+                $.each(PB.gptAds, function (key, value) {
+                    if ($('div.gpt-ad:not(.js-inview)[data-id="' + key + '"]').length > 0) {
+                        if (key !== 'adoop') {
+                            toRefresh.push(value);
+                        }
+                    }
+                });
+
+                //refresh sra ads
+                googletag.cmd.push(function () {
+                    googletag.pubads().refresh(toRefresh);
+                });
+            }
+
+            if (typeof PB.gptAutoRefresh !== 'undefined') {
+                PB.gptAutoRefresh.gptStandAlone.forEach(function (value) {
+                    googletag.cmd.push(function () {
+                        googletag.pubads().refresh([PB.gptStandAlone[value]]);
+                    });
+                });
+            }
+
+        }, timeInterval * 1000);
+
+        win.PB = PB;
+    }
+}(window));

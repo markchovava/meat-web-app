@@ -1,0 +1,272 @@
+/* jshint maxparams: 4 */
+(function (win) {
+    var $          = win.jQuery,
+        PB         = win.PB || {},
+        postscribe = win.postscribe,
+        console    = win.console;
+
+    /**
+     * Sidebarloader Exception class
+     *
+     * @param {string} message The message
+     */
+    PB.SidebarLoaderException = function (message) {
+        this.name = 'PB.SidebarLoaderException';
+        this.message = (message || '');
+    };
+    PB.SidebarLoaderException.prototype = Error.prototype;
+
+    PB.SidebarLoader = (function () {
+        var sidebars      = [],
+            sidebars_data = {},
+            to_request    = {},
+
+            // Get the parameter of a given URL
+            getParameterByName = function (param) {
+                var regex   = new RegExp("[\\?&]" + param + "=([^&#]*)"),
+                    results = regex.exec(win.location.search);
+
+                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            },
+
+            /**
+             * Validate the settings for the Sidebar Loader
+             *
+             * @return {boolean} true if pass
+             */
+            validateSettings = function () {
+                var properties_to_check = [
+                    {name : 'sidebars', required : true, type : 'object'},
+                    {name : 'device', required : true, type : 'string'},
+                    {name : 'postId', required : false, initValue : null, type : 'number'},
+                    {name : 'queryParams', required : false, initValue : {}, type : 'object'}
+                ];
+
+                properties_to_check.forEach(function (property) {
+                    initializeSettings(to_request, property);
+
+                    if (property.name === 'sidebars') {
+                        if (Object.keys(to_request[property.name]).length === 0) {
+                            throw new PB.SidebarLoaderException('At least 1 sidebar is required');
+                        }
+
+                        to_request['sidebarIds'] = [];
+                        Object.getOwnPropertyNames(to_request[property.name])
+                            .forEach(function (option) {
+                                to_request[property.name][option] = validateSidebarSettings(
+                                    to_request[property.name][option]
+                                );
+                                to_request['sidebarIds'].push(option);
+                            });
+                        to_request['sidebarIds'] = to_request['sidebarIds'].join(',');
+                    }
+                });
+
+                return true;
+            },
+
+            /**
+             * Validate the settings for the sidebars
+             *
+             * @param {object} sidebar_settings Sidebar settings to verify
+             *
+             * @return {object} sidebar_settings Verified and initialized sidebar settings
+             */
+            validateSidebarSettings = function (sidebar_settings) {
+                if (sidebar_settings === undefined) {
+                    throw new PB.SidebarLoaderException('Missing parameter settings');
+                }
+
+                var properties_to_check = [
+                    {name : 'container', required : true, type: 'string'},
+                    {name : 'postscribe', required : false, initValue : false, type: 'boolean'},
+                    {name : 'trigger', required : false, initValue : [], type: 'object'},
+                ];
+
+                properties_to_check.forEach(function (property) {
+                    sidebar_settings = initializeSettings(sidebar_settings, property);
+                });
+
+                return sidebar_settings;
+            },
+
+            /**
+             * Validate the params of an array
+             *
+             * @param {object} settings Array of settings to verify
+             * @param {object} property Object with the properties to check in the options
+             *
+             * @return {object} settings Verified and initialized settings
+             */
+            initializeSettings = function (settings, property) {
+                if (settings[property.name] === undefined) {
+                    if (property.required) {
+                        throw new PB.SidebarLoaderException('Missing ' + property.name + ' option');
+                    } else {
+                        settings[property.name] = property.initValue;
+                    }
+                } else if (typeof(settings[property.name]) !== property.type) {
+                    throw new PB.SidebarLoaderException(
+                        property.name + '" option has wrong type: ' +
+                        typeof(settings[property.name]) +
+                        ', expected: ' + property.type
+                    );
+                }
+
+                return settings;
+            },
+
+            /**
+             * Make the ajax call to the service that returns the json
+             * with the sidebars from wordpress
+             *
+             * @param {string} sidebarIds  List of sidebar ids comma separated
+             * @param {number} postId      Id of the post
+             * @param {string} device      Device for the validation
+             * @param {object} queryParams Additional params for the request
+             *
+             * @return {object} The jqXHR object
+             */
+            getSidebars = function (sidebarIds, postId, device, queryParams) {
+                var data = $.extend({}, {
+                        'sidebars'  : sidebarIds,
+                        'gnad_type' : getParameterByName('gnad_type'),
+                        'post_id'   : postId,
+                        'device'    : device
+                    }, queryParams, PB.wpQueryVars);
+
+                /**
+                 * TODO this is for subdirectory sites like WZ
+                 * one day we will add proper class/functions for this
+                 */
+                var url       = window.location.href;
+                var array_url = url.split('/');
+
+                if (url.indexOf('mandatory.com/wrestlezone') > -1) {
+                    //url = url.replace('mandatory.com', 'wrestlezone.com');
+                    url = array_url[0] + '//' + array_url[2] + '/' + array_url[3];
+                } else {
+                    url = array_url[0] + '//' + array_url[2];
+                }
+
+                return $.ajax({
+                    url      : url + '/api/pb_sidebars/get/',
+                    data     : data,
+                    dataType : 'json',
+                    type     : 'get'
+                });
+            },
+
+            /**
+             * Validates and render the sidebars in the specific container
+             * depending if need postscribe or not
+             *
+             * @param {object}   sidebarData Sidebar settings
+             * @param {string}   sidebarHtml Html of the sidebar to render
+             * @param {function} callback    Callback funtion
+             */
+            render = function (sidebarData, sidebarHtml, callback) {
+                if ($(sidebarData.container).length === 0) {
+                    throw new PB.SidebarLoaderException(
+                        'the container ' + sidebarData.container +
+                        ' was not found'
+                    );
+                }
+
+                if (sidebarData.postscribe) {
+                    renderWithPostscribe(sidebarHtml, sidebarData.container, callback);
+                } else {
+                    renderWithJquery(sidebarHtml, sidebarData.container, callback);
+                }
+            },
+
+            /**
+             * Render the html in the container using jquery
+             *
+             * @param {string}   sidebarHtml Content to render
+             * @param {string}   container   Id of the container
+             * @param {function} callback    Callback funtion
+             */
+            renderWithJquery = function (sidebarHtml, container, callback) {
+                $(container).html(sidebarHtml);
+
+                if (typeof callback === 'function') {
+                    callback();
+                }
+            },
+
+            /**
+             * Render the html in the container using postscribe
+             *
+             * @param {string} sidebarHtml Content to render
+             * @param {string} container   Id of the container
+             * @param {function} callback    Callback funtion
+             */
+            renderWithPostscribe = function (sidebarHtml, container, callback) {
+                var options = {};
+
+                if (typeof callback === 'function') {
+                    options = {
+                        done: callback
+                    };
+                }
+
+                postscribe(container, sidebarHtml, options);
+            },
+
+            /**
+             * Render all the sidebards individually using the
+             * response from the ajax call
+             *
+             * @param  {object} response Ajax response for the sidebars
+             */
+            renderSidebars       = function (response) {
+                Object.getOwnPropertyNames(response.sidebars)
+                    .forEach(function (sidebar_name) {
+                        try {
+                            var sidebar      = sidebars_data[sidebar_name],
+                                sidebar_html = response.sidebars[sidebar_name];
+
+                            render(sidebar, sidebar_html, function () {
+                                sidebar.trigger.push(sidebar_name);
+                                sidebar.trigger.forEach(function (value) {
+                                    $(PB.Core).trigger(value);
+                                });
+                            });
+
+                        } catch (ex) {
+                            console.error(ex);
+                        }
+                    });
+            };
+
+        return {
+            VERSION: '2.0',
+
+            load: function (settings) {
+                to_request = $.extend({}, settings);
+
+                validateSettings();
+
+                sidebars_data = $.extend({}, sidebars_data, to_request.sidebars);
+
+                sidebars.push(
+                    getSidebars(
+                        to_request.sidebarIds,
+                        to_request.postId,
+                        to_request.device,
+                        to_request.queryParams
+                    ).then(function (response) {
+                        renderSidebars(response);
+                    })
+                );
+            },
+
+            onLoad: function () {
+                return $.when.apply($, sidebars);
+            }
+        };
+    }());
+
+    win.PB = PB;
+}(window));

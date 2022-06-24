@@ -1,0 +1,88 @@
+/*
+ * This script checks when an ad is visible within the viewport and loads it.
+ * It only checks for ads that contain the CSS class ".gpt-lazy-load"
+ *
+ */
+(function (win) {
+    if (typeof readAdmiralCookie === "function"){
+        admiral_status = readAdmiralCookie();
+    }
+    if (typeof getAdmiral === "function"){
+        admiral_status = getAdmiral("admiral_status");
+    }
+    if ('undefined' === typeof admiral_status || true !== admiral_status) {
+        'use strict';
+        var adsLoadedCount = 0,
+            _              = _,
+            PB             = win.PB,
+            $              = win.jQuery,
+            $win           = $(win),
+            $body          = $('body'),
+            SidebarLoader  = PB.SidebarLoader,
+            waitForSidebar = PB.gptWaitSidebarLoaded,
+            // Google Publisher Tag API object
+            // https://support.google.com/dfp_premium/answer/1650154?hl=en
+            googletag      = win.googletag,
+            $ad,
+            adId
+            $inViewList    = $body.find('.js-inview');
+
+            inViewHandler = function () {
+                $body.find('.js-inview').each(function () {
+                    $ad = $(this);
+                    adId = $ad.attr('id');
+
+                    if ($ad.visible(true)) {
+                        if (PB.gptAds[adId] && !PB.gptAds[adId].pbLoaded) {
+                            console.info(adId);
+                            // mark ad as loaded
+                            adsLoadedCount++;
+                            PB.gptAds[adId].pbLoaded = true;
+
+                            // ask google to load the ad
+                            googletag.display(adId);
+
+                            googletag.pubads().refresh([PB.gptAds[adId]]);
+
+                            // if all the ads have been loaded
+                            if (adsLoadedCount === getTotalInviewAds()) {
+
+                                // remove event listeners
+                                $win.off('scroll', inViewHandler);
+                            }
+                        }
+                    }
+                });
+            },
+
+            initialize = function () {
+                $win.scroll(inViewHandler);
+                inViewHandler();
+            },
+
+            // Returns only the number of ads that uses the inview class
+            getTotalInviewAds = function () {
+                var totalElements = 0;
+
+                Object.getOwnPropertyNames(PB.gptAds).forEach(function (currentAdId) {
+                    if ($('#' + currentAdId).hasClass('js-inview')) {
+                        totalElements++;
+                    }
+                });
+
+                return totalElements;
+            };
+
+        $(function () {
+            if (SidebarLoader && waitForSidebar) {
+                // wait for all the sidebars to be loaded
+                SidebarLoader.onLoad().then(function () {
+                    // load all the ads within the viewport
+                    initialize();
+                });
+            } else {
+                initialize();
+            }
+        });
+    }
+}(window));

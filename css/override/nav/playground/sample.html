@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Page Title</title>
+</head>
+<body>
+  <div class="data">
+    <h1>Enter first number</h1>
+    <input type="" id="age" value="">
+    <button type="button" name="button" id="click">
+      Submit
+    </button>
+
+    <h1>Enter third number</h1>
+    <input type="" id="age" value="">
+    <button type="button" name="button" id="click">
+      Submit
+    </button>
+
+    <h1>Enter fifth number</h1>
+    <input type="" id="age" value="">
+    <button type="button" name="button" id="click">
+      Submit
+    </button>
+
+  </div>
+  <button class="save btn-primary" href="#" role="button">hide</button>
+  <button class="show btn-primary" href="#" role="button">show</button>
+<script>
+document.querySelector(".save").addEventListener("click", () => {
+  document.querySelector(".data").style.display = "none";
+})
+document.querySelector(".show").addEventListener("click", () => {
+  document.querySelector(".data").style.display = "block";
+})
+
+</script>
+</body>
+</html>

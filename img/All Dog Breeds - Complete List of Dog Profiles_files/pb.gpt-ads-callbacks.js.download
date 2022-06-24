@@ -1,0 +1,87 @@
+/* jshint maxparams: 4 */
+(function (win) {
+    var PB                  = win.PB || {},
+        evGPTAds            = PB.evGPTAds || {};
+
+    PB.postSlotCallback = PB.postSlotCallback || [];
+    PB.preSlotCallback  = PB.preSlotCallback || [];
+
+    evGPTAds.Callbacks = (function () {
+            /**
+             * Iterates all the functions in the array and execute them
+             *
+             * @param  {array} callbacks
+             */
+        var execute = function (callbacks) {
+                while (callbacks.length) {
+                    var callback = callbacks.splice(0, 1);
+                    callback[0]();
+                }
+            };
+
+        return {
+            /**
+             * Execute the callbacks saved to be run
+             * before the ad slot is defined
+             *
+             * @return PB.evGPTAds
+             */
+            executePre  : function () {
+                execute(PB.preSlotCallback);
+
+                return this;
+            },
+
+            /**
+             * Execute the callbacks saved to be run
+             * after the ad slot is defined
+             *
+             * @return PB.evGPTAds
+             */
+            executePost : function () {
+                setInterval(function () {
+                    execute(PB.postSlotCallback);
+                }, 100);
+
+                return this;
+            }
+        };
+    }());
+
+    evGPTAds.Promise = (function () {
+            /**
+             * Array of promises that first should be
+             * resolved before trigger the ads request
+             *
+             * @type {Array}
+             */
+        var triggerPromises = [];
+
+        return {
+            /**
+             * Add new promise to the queue
+             *
+             * @return Deferred Object
+             */
+            new    : function () {
+                var promise = $.Deferred();
+
+                triggerPromises.push(promise);
+
+                return promise;
+            },
+
+            /**
+             * Trigger onLoad
+             *
+             * @return Promise Object
+             */
+            onLoad : function () {
+                return $.when.apply($, triggerPromises);
+            }
+        };
+    }());
+
+    PB.evGPTAds = evGPTAds;
+    win.PB    = PB;
+}(window));

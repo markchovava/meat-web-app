@@ -1,0 +1,112 @@
+(function (win) {
+    'use strict';
+
+    var $   = win.jQuery,
+
+        PB = win.PB || {},
+
+        // default options
+        defaults = {
+
+            // selector that selects the social buttons container
+            buttonsContainer: '.connect-buttons',
+
+            // selector that selects all social buttons
+            buttons         : '.connect-button',
+
+            // selector that selects the social boxes container
+            boxesContainer  : '.connect-socials',
+
+            // selector that selects all social boxes
+            boxes           : '.connect-social',
+
+            // animation speed
+            speed           : 250
+        },
+
+        Connect;
+
+    // create namespace
+    PB.Connect = {};
+
+    // constructor
+    Connect = function (options) {
+        var self   = this,
+
+            // merge default configuration with the one sent
+            config = $.extend({}, defaults, options);
+
+        this.$buttonsContainer = $(config.buttonsContainer);
+        this.$boxesContainer   = $(config.boxesContainer);
+        this.speed             = config.speed;
+
+        if (this.$buttonsContainer.length >= 1) {
+            this.$buttonsContainer = this.$buttonsContainer.eq(this.$buttonsContainer.length - 1);
+        }
+
+        if (this.$boxesContainer.length >= 1) {
+            this.$boxesContainer = this.$boxesContainer.eq(this.$boxesContainer.length - 1);
+        }
+
+        this.$buttons          = $(config.buttons, this.$buttonsContainer);
+        this.$boxes            = $(config.boxes, this.$boxesContainer);
+
+        function activateButton(index) {
+            return self.$buttons.eq(index).addClass('is-active');
+        }
+
+        function deactivateButton(index) {
+            return self.$buttons.eq(index).removeClass('is-active');
+        }
+
+        function showSocialBox(index) {
+            return self.$boxes.eq(index).stop().removeClass('hidden')
+                .animate({opacity: 1}, self.speed);
+        }
+
+        function hideSocialBox(index) {
+            return self.$boxes.eq(index).stop().animate({opacity: 0}, self.speed, function () {
+                $(this).addClass('hidden');
+            });
+        }
+
+        $(document).ready(function () {
+            self.$buttonsContainer.on('mouseenter focus', config.buttons, function () {
+                var index = $(this).index();
+
+                activateButton(index);
+                showSocialBox(index);
+            });
+
+            self.$boxesContainer.on('mouseenter focus', config.boxes, function () {
+                var index = $(this).index();
+
+                activateButton(index);
+                showSocialBox(index);
+            });
+
+            self.$buttonsContainer.on('mouseleave blur', config.buttons, function () {
+                var index = $(this).index();
+
+                deactivateButton(index);
+                hideSocialBox(index);
+            });
+
+            self.$boxesContainer.on('mouseleave blur', config.boxes, function () {
+                var index = $(this).index();
+
+                deactivateButton(index);
+                hideSocialBox(index);
+            });
+        });
+    };
+
+    // expose create method as builder
+    PB.Connect.create = function (options) {
+        return new Connect(options);
+    };
+
+    // overwrite namespace with augmented one
+    win.PB = PB;
+
+}(window));

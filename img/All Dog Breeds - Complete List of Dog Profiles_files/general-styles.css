@@ -1,0 +1,18 @@
+/* Responsive styles for HTML5 youtube videos */
+/* Editors must wrap video iframe with class using Formats dropdown in editor */
+
+.yt-embed.embed-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+#adoop{
+	height: 1px;
+	width: 100%;
+	position: fixed;
+	bottom: 100px;
+	left: 0;
+}

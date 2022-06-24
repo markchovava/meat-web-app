@@ -1,0 +1,54 @@
+/*
+ * Initialize Google Analytics Manager
+ * It listens for 2 events:
+ *  ga:pageview - If you want to trigger a page view
+ *  ga:event - If you want to trigger an event
+ *
+ * Example:
+ *
+ *  // triggering a page view
+ *  $(PB).trigger('ga:pageview', [pageIsOptional]);
+ *
+ *  // triggering an event
+ *  $(PB).trigger('ga:event', [{
+ *      category: 'category',
+ *      action: 'action',
+ *      label: 'label'
+ *  }]);
+ */
+(function (win) {
+    var PB            = win.PB,
+        $PB           = $(PB);
+
+    function isAdBlockerActive() {
+        var ad = document.createElement('ins');
+
+        ad.className      = 'AdSense';
+        ad.style.display  = 'block';
+        ad.style.position = 'absolute';
+        ad.style.top      = '-1px';
+        ad.style.height   = '1px';
+
+        document.body.appendChild(ad);
+        var isAdBlockEnabled = !ad.clientHeight;
+        document.body.removeChild(ad);
+
+        return (isAdBlockEnabled ? 'on' : 'off');
+    }
+    if (GAAuthor) {
+        gtag('set', 'dimension4', GAAuthor);
+    }
+    gtag('set', 'dimension2', isAdBlockerActive());
+
+    $PB.on('ga:pageview pageview', function (e, page) {
+        gtag('event', 'pageview', page);
+    });
+
+    $PB.on('ga:event', function (e, options) {
+        gtag('event', options.action, {
+            eventCategory: options.category,
+            eventLabel: options.label
+        });
+    });
+
+}(window));

@@ -1,0 +1,39 @@
+(function (win) {
+    'use strict';
+
+    var $ = win.jQuery,
+        PB = win.PB,
+        sections = {};
+
+    PB.Core.register('sections-scroller', function () {
+        return {
+            cacheElements: function () {
+                $('.js-letter-section').each(function () {
+                    var $el = $(this);
+
+                    sections[$el.data('letter')] = $el;
+                });
+            },
+            bindEvents: function () {
+                $('.js-alphabet')
+                    .on('click', '.js-scroll-to-letter-button', function (e) {
+                        var $item = $(this),
+                            letter = $item.data('letter');
+
+                        e.preventDefault();
+
+                        if (typeof sections[letter] !== 'undefined') {
+                            $('html, body').animate({
+                                scrollTop: parseInt(sections[letter].offset().top - 185)
+                            }, 3000);
+                        }
+
+                    });
+            },
+            init: function () {
+                this.cacheElements();
+                this.bindEvents();
+            }
+        };
+    });
+}(window));

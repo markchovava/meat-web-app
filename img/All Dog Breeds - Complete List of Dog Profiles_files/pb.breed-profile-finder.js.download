@@ -1,0 +1,122 @@
+(function (win) {
+    'use strict';
+    var $  = win.jQuery,
+        PB = win.PB || {};
+
+    var BreedProfileFinder = function () {
+        this._options = {
+            container: '.js-search-results-list',
+            search_element: '.js-search-results-list li a',
+            search_field: '#breed-search'
+        };
+        this.breeds = {};
+        this.breedsCurrent = {};
+        this.html = '';
+        this.init = function () {
+            $(this._options.search_field).val('Find Your Breed');
+            $(this._options.search_field).click(function () {
+                if ($(this).val() === 'Find Your Breed') {
+                    $(this).val('');
+                }
+            });
+            
+            this.breeds = this.populateBreeds();
+            var triggered = 0,
+                $input    = $(this._options.search_field),
+                $results  = $(this._options.container);
+
+            $results.parent().addClass('inactive');
+
+            $input.keyup(function () {
+                if (triggered > 0) {
+                    var searchString = $(BreedProfileFinder._options.search_field).val();
+                    if (searchString.length > 1) {
+                        BreedProfileFinder.searchBreeds(searchString);
+                    } else {
+                        BreedProfileFinder.resetBreeds();
+                    }
+                }
+                triggered++;
+            });
+
+            $input.focus(function(){
+                $results.parent().removeClass('inactive');
+            }).blur(function(){
+                $results.parent().addClass('inactive');
+            });
+
+            return true;
+        };
+
+        this.populateBreeds = function () {
+            var objBreeds = {};
+            var catName, catUrl;
+            $(this._options.search_element).each(function () {
+                catName = $(this).html();
+                catUrl = $(this).attr('href');
+                objBreeds[catUrl] = catName;
+            });
+            return objBreeds;
+        };
+
+        this.searchBreeds = function (searchString) {
+            var cBreeds = {};
+            if (this._isEmptyObject(this.breedsCurrent.length)) {
+                cBreeds = this.breeds;
+            } else {
+                cBreeds = this.breedsCurrent;
+            }
+            this.breedsCurrent = {};
+            var html = '';
+            for (var catUrl in cBreeds) {
+                if (cBreeds[catUrl].toLowerCase().indexOf(searchString.toLowerCase()) !== -1) {
+                    this.breedsCurrent[catUrl] = cBreeds[catUrl];
+                    html += '<li><a href="' + catUrl + '">' + cBreeds[catUrl] + '</a></li>';
+                }
+            }
+            if (html !== this.html) {
+                $(this._options.container).fadeOut('fast', function () {
+                    $(BreedProfileFinder._options.container).html(html);
+                    $(BreedProfileFinder._options.container).fadeIn('fast');
+                });
+                this.html = html;
+            }
+        };
+
+        this.resetBreeds = function () {
+            var html = '';
+            for (var catUrl in this.breeds) {
+                html += '<li><a href="' + catUrl + '">' + this.breeds[catUrl] + '</a></li>';
+            }
+            if (html !== this.html) {
+                $(this._options.container).fadeOut('fast', function () {
+                    $(BreedProfileFinder._options.container).html(html);
+                    $(BreedProfileFinder._options.container).fadeIn('fast');
+                });
+                this.breedsCurrent = {};
+                this.html = html;
+            }
+        };
+
+        this.setOptions = function (options) {
+            if (typeof options !== 'undefined') {
+                this._options = $.extend({}, this._options, options);
+            }
+        };
+
+        this._isEmptyObject = function (obj) {
+            for (var prop in obj) {
+                if (obj.hasOwnProperty(prop)) {
+                    return false;
+                }
+            }
+            return true;
+        };
+    };
+
+    BreedProfileFinder    = new BreedProfileFinder();
+    PB.BreedProfileFinder = BreedProfileFinder;
+    win.PB                = PB;
+
+    PB.BreedProfileFinder.init();
+}(window));

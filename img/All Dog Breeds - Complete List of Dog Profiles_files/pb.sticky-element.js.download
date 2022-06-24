@@ -1,0 +1,82 @@
+(function (win) {
+    'use strict';
+
+    var PB = win.PB,
+    MQ = PB.MQ;
+
+    PB.Core.register('sticky-element', function () {
+
+        var $document         = $(document),
+        $leaderboard      = $('#js-leaderboard'),
+        stickyOverload    = 0,
+        catchAndReleaseAt = 1000,
+        applyStickyAt     = 2250,
+        hasStickyRail     = false,
+        $left             = $('.col-left'),
+        $right            = $('.inner-right-rail'),
+        $atf              = $('.js-sticky-atf'),
+        $btf              = $('.js-sticky-btf');
+
+        function stickyfyRightRail(force) {
+            if ($left.height() > $right.height() + applyStickyAt) {
+                if (!hasStickyRail || force) {
+                    if (catchAndReleaseAt < $document.height() / 5) {
+                        catchAndReleaseAt = $document.height() / 5;
+                    }
+
+                    $atf.parent().stickify({
+                        offsetTop           : 75,
+                        limitPosition       : catchAndReleaseAt,
+                        limitOffsetOverload : stickyOverload,
+                        useRelativeLimit    : true,
+                        zIndex              : 5
+                    });
+
+                    $btf.stickify({
+                        offsetTop           : 75,
+                        offsetBottom        : 15,
+                        useRelativeLimit    : true,
+                        limitOffsetOverload : stickyOverload,
+                        zIndex              : 5
+                    });
+                }
+                hasStickyRail = true;
+            } else {
+                if (hasStickyRail) {
+                    $atf.parent().stickify({remove : true});
+                    $btf.stickify({remove : true});
+                }
+                hasStickyRail = false;
+            }
+        }
+
+        function leadeboardReleased() {
+            stickyOverload -= $leaderboard.height() + 10;
+            stickyfyRightRail(true);
+        }
+
+        function resizeDetected() {
+            stickyfyRightRail(false);
+        }
+
+        return {
+            init: function () {
+                if (!MQ.isMobile()) {
+                    var $body = $('body');
+
+                    if ($body.hasClass('single')) {
+                        stickyOverload -= $('h1.page-title').parent().height();
+                    }
+
+                    stickyfyRightRail(false);
+
+                    $(win).on('body-change', leadeboardReleased);
+                    $left.resize(resizeDetected);
+                    $right.resize(resizeDetected);
+                }
+            }
+        };
+
+    });
+
+}(window));

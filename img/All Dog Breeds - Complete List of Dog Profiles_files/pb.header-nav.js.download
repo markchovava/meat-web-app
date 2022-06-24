@@ -1,0 +1,167 @@
+(function (win) {
+    'use strict';
+
+    var $  = win.jQuery,
+        PB = win.PB,
+        MQ = PB.MQ;
+
+    PB.Core.register('header-nav', function () {
+
+        var $header     = $('#js-site-navigation'),
+            $main       = $('.js-menu-main', $header),
+            $overlay    = $('.js-menu-overlay', $header),
+
+            $topMenu    = $('.js-header-bottom',$main),
+            $btnMenu    = $('.js-toggle-menu'),
+            $btnSearch  = $('.js-toggle-search', $main),
+            btnArray    = [
+                $btnMenu,
+                $btnSearch
+            ],
+
+            $search     = $('.js-search'),
+            $menu       = $('.js-full-menu ul', $overlay),
+
+            toggleLabel = 'expanded',
+            activeLabel = 'active',
+            $win        = $(window),
+            scrollPos   = 0,
+
+            subMenus    = [];
+
+        function toggleTopButton($dom) {
+            var btnClicked = 'none';
+
+            removeActiveClass();
+
+            for (var i = 0; i < btnArray.length; i++) {
+                if ($dom[0] === btnArray[i][0]) {
+                    btnArray[i].toggleClass(toggleLabel);
+
+                    if (btnArray[i].hasClass(toggleLabel)) {
+                        btnClicked = btnArray[i].data('button');
+
+                        markActive($dom);
+                    }
+
+                } else {
+                    btnArray[i].removeClass(toggleLabel);
+                }
+            }
+
+            if (btnClicked !== 'none') {
+                $overlay.addClass(toggleLabel);
+            } else {
+                $overlay.removeClass(toggleLabel);
+            }
+        }
+
+        function markActive($dom) {
+            switch ($dom.data('button')) {
+                case 'submenu':
+                    $menu.addClass(activeLabel);
+                    $('.' + $dom.data('id'), $menu).addClass(activeLabel)
+                        .addClass(toggleLabel);
+                    break;
+                case 'search':
+                    $search.addClass(activeLabel);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        function subMenuInit() {
+            $menu.children('.menu-item-has-children').each(function (e) {
+                var $this = $(this);
+
+                // Adding jquery DOM elements into storage object.
+                if ($this.attr('id') === undefined) {
+                    $this.attr('id', 'menu-item-' + e);
+                }
+                subMenus[$this.attr('id')] = $this;
+
+                $this.click(function (e) {
+                    var $target = $(e.target);
+                    if (!$target.is('a') ||
+                        ($target.is('a') && !$this.hasClass(toggleLabel))) {
+                        e.preventDefault();
+                        toggleSubmenu($this.attr('id'));
+                    }
+                });
+            });
+        }
+
+        function toggleSubmenu(id) {
+            for (var key in subMenus) {
+                var $dom = subMenus[key];
+
+                if (id === key) {
+                    $dom.toggleClass(toggleLabel);
+                } else {
+                    $dom.removeClass(toggleLabel);
+                }
+            }
+        }
+
+        function removeActiveClass() {
+            $menu.removeClass(activeLabel).children().each(function () {
+                $(this).removeClass(activeLabel).removeClass(toggleLabel);
+            });
+        }
+
+        function closeMenu() {
+            if ($overlay.hasClass(toggleLabel)) {
+                toggleTopButton([null]);
+            }
+        }
+
+        function topMenuScroller() {
+            var min     = 16,
+                max     = 62,
+                diff    = $win.scrollTop() - scrollPos,
+                menuPos = parseInt($topMenu.css('top'));
+
+            scrollPos = $win.scrollTop();
+
+            if (menuPos < max || menuPos > min) {
+                menuPos -= Math.round(diff / 5);
+
+                if (menuPos > max) {
+                    menuPos = max;
+                } else if (menuPos < min) {
+                    menuPos = min;
+                }
+
+                $topMenu.css('top', menuPos);
+            }
+        }
+
+        return {
+            init: function () {
+                $btnMenu.click(function () {
+                    toggleTopButton($(this));
+                });
+
+                $btnSearch.click(function () {
+                    $btnSearch.toggleClass(activeLabel);
+                    $search.toggleClass(activeLabel);
+                });
+
+                $search.mouseleave(function () {
+                    $overlay.removeClass(toggleLabel);
+                });
+
+                $win.scroll(function () {
+                    closeMenu();
+                    $btnSearch.removeClass(activeLabel);
+                    $search.removeClass(activeLabel);
+
+                    topMenuScroller();
+                });
+
+                subMenuInit();
+            }
+        };
+    });
+}(window));

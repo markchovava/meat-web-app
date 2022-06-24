@@ -1,0 +1,128 @@
+/* jshint maxparams: 4 */
+(function (win) {
+    var $          = win.jQuery,
+        PB         = win.PB || {};
+
+    PB.evGPTBuilder = (function () {
+
+        var buildTag = function (opts) {
+
+            var adPromise   = $.Deferred(),
+                googletag   = win.googletag;
+
+            // If the ad has the resize option initialize the controller
+            if (opts.resize) { adResize(opts); }
+
+            googletag.cmd.push(function () {
+
+                var adSize = JSON.parse(opts.sizeStr);
+
+
+                PB.gptAds[opts.adDiv] =
+                    googletag.defineSlot(opts.adUnit, adSize, opts.adDiv)
+                    .addService(googletag.pubads());
+
+                // Include each of the targeting options in the tag
+                $.each(opts.targeting, function (key, val) {
+                    PB.gptAds[opts.adDiv].setTargeting(key, val);
+                });
+
+                // Include the mapping functionality if it exists
+                if (opts.mapping.length > 0) {
+                    adMapping(opts);
+                }
+
+                googletag.pubads().enableSingleRequest();
+
+                // Include AudienceScience callback parameters
+                if (opts.asBool) {
+                    adAudienceScience(opts, adPromise);
+                }
+            });
+
+            if (!opts.asBool) {
+                adPromise.resolve();
+            }
+
+            return adPromise;
+
+
+        },
+
+        adResize = function (ad) {
+            PB.Core.start('resize-iframe', ad);
+        },
+
+        adMapping = function (opts) {
+
+            var googletag   = win.googletag,
+                sizeMapping = googletag.sizeMapping();
+
+            $.each(opts.mapping, function (key, val) {
+                sizeMapping = sizeMapping.addSize(
+                    JSON.parse(val.viewport),
+                    JSON.parse(val.sizes)
+                );
+            });
+
+            sizeMapping = sizeMapping.build();
+
+            PB.gptAds[opts.adDiv].defineSizeMapping(sizeMapping);
+
+        },
+
+        adAudienceScience = function (opts, promise) {
+
+            if (typeof win.asiVars !== "undefined") {
+
+                if (typeof win.asiVars[opts.asID] !== "undefined") {
+                    PB.gptAds[opts.adDiv].setTargeting('gwd', win.asiVars[opts.asID]);
+                }
+
+                promise.resolve();
+
+            } else {
+
+                var i       = 0,
+                    asCheck = setInterval(function () {
+
+                    // if AsiVars is ready or 2 seconds have passed
+                    if (typeof win.asiVars !== "undefined" || i >= 9) {
+                        PB.waitForAS = false;
+                        PB.gptAds[opts.adDiv].setTargeting('gwd', win.asiVars[opts.asID]);
+                        promise.resolve();
+                        clearInterval(asCheck);
+                    }
+
+                    i++;
+
+                }, 200);
+
+            }
+
+        };
+
+        return {
+
+            adPromises: [],
+
+            enqueueAd : function (opts) {
+
+                var _self   = this,
+                    ad      = buildTag(opts);
+
+                _self.adPromises.push(ad);
+
+            },
+
+            onLoad: function () {
+
+                return $.when.apply($, PB.evGPTBuilder.adPromises);
+
+            }
+        };
+
+    }());
+
+    win.PB = PB;
+}(window));

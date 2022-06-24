@@ -1,0 +1,42 @@
+(function (win) {
+    'use strict';
+
+    var PB = win.PB;
+
+    PB.Core.register('billboard-close-button', function () {
+        var noStickyClass,
+            maxHeight    = 100,
+            $leaderboard = $('.js-leaderboard'),
+            $btnClose    = $('#billboard-close-btn');
+
+        function resizer() {
+            if ($leaderboard.height() > maxHeight) {
+                btnListener();
+            } else {
+                $btnClose.hide();
+            }
+        }
+
+        function btnListener() {
+            $btnClose.show().off('click').click(function () {
+                $('body').addClass(noStickyClass);
+                $btnClose.remove();
+
+                $(win).trigger('body-change');
+            });
+        }
+
+        return {
+            init: function (params) {
+                noStickyClass = params.noStickyClass;
+
+                if ($leaderboard.height() > maxHeight) {
+                    btnListener();
+                } else {
+                    $leaderboard.resize(resizer);
+                }
+            }
+        };
+    });
+
+}(window));

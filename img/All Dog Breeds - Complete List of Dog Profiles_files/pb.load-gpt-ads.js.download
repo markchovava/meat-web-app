@@ -1,0 +1,100 @@
+/*
+ * This script loads all the non-lazy GPT ads present in the page
+ */
+(function (win) {
+    if (typeof readAdmiralCookie === "function"){
+        admiral_status = readAdmiralCookie();
+    }
+    if (typeof getAdmiral === "function"){
+        admiral_status = getAdmiral("admiral_status");
+    }
+    if ('undefined' === typeof admiral_status || true !== admiral_status) {
+
+        var $              = win.jQuery,
+            PB             = win.PB,
+            evGPTAds       = PB.evGPTAds || {},
+            SidebarLoader  = PB.SidebarLoader,
+            waitForSidebar = PB.gptWaitSidebarLoaded,
+            console        = win.console,
+
+            // Google Publisher Tag API object
+            // https://support.google.com/dfp_premium/answer/1650154?hl=en
+            googletag = win.googletag;
+
+
+        /*
+        * This functions loads just the ads that exist on the page
+        */
+        function loadGPTAds(ads) {
+            var adsPresent = [];
+            evGPTAds.Callbacks.executePre();
+
+            googletag.cmd.push(function () {
+                $.each(ads, function (key, value) {
+                    if ($('div.gpt-ad:not(.js-inview)[data-id="' + key + '"]').length > 0 &&
+                        !value.pbLoaded) {
+                        adsPresent.push(value);
+
+                        // this line is needed for the refresh method to work correctly
+                        googletag.display(key);
+                    }
+                });
+
+                let host = window.location.host.replace(/^((sbx)|(dev)|(stg)|(www))\./, '');
+
+                if (host === 'mandatory.com' &&
+                window.location.pathname.indexOf('/wrestlezone/') === 0) {
+                    host = 'wrestlezone';
+                } else {
+                    host = host.replace('.com', '').replace('.net', '');
+                }
+
+                if ( ['dogtime', 'mandatory'].indexOf(host) >= 0 ) {
+                    console.info('[PB DEBUG] -------- triggering post callbacks then {aax}');
+                    evGPTAds.Callbacks.executePost();
+                    // loading the ads in one single request
+                    window.aax = window.aax || {};
+                    window.aax.cmd = window.aax.cmd || [];
+                    window.aax.cmd.push(function () {
+                        if (window.aax.getAbpStatus()) {
+                            console.info('[PB DEBUG] --------- Fullfill Promise {aax}');
+                            evGPTAds.Promise.resolve();
+                            window.googletag = window.googletag || {};
+                            window.googletag.cmd = window.googletag.cmd || [];
+                            window.googletag.cmd.push(function () {
+                                googletag.pubads().refresh(adsPresent);
+                            });
+                            console.info('[PB DEBUG] --------- Ads rendered  {aax}');
+                        }
+                    });
+                } else {
+                    console.info('[PB DEBUG] -------- triggering post callbacks');
+                    evGPTAds.Callbacks.executePost();
+                    // loading the ads in one single request
+                    evGPTAds.Promise.onLoad().then(function () {
+                        console.info('[PB DEBUG] --------- Fullfilled Promise');
+                        googletag.pubads().refresh(adsPresent);
+                        console.info('[PB DEBUG] --------- Ads rendered');
+                    });
+                }
+            });
+        }
+
+        // execute after the DOM is ready, in order to guarantee that all the ads have been defined.
+        $(function () {
+
+            if (SidebarLoader && waitForSidebar) {
+
+                SidebarLoader.onLoad().then(function () {
+                    loadGPTAds(PB.gptAds);
+                });
+
+            } else {
+
+                loadGPTAds(PB.gptAds);
+
+            }
+
+        });
+    }
+}(window));

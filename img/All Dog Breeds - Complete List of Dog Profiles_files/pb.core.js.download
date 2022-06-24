@@ -1,0 +1,44 @@
+(function (win) {
+    'use strict';
+
+    var $  = win.jQuery,
+        PB = win.PB || {};
+
+    PB.Core = (function () {
+        var modules = {};
+
+        return {
+            register: function (moduleName, moduleFn) {
+                if (typeof modules[moduleName] === 'undefined') {
+                    modules[moduleName] = moduleFn;
+                } else {
+                    throw 'Module ' + moduleName + ' already registered';
+                }
+            },
+
+            start: function (moduleName) {
+                var moduleInstance,
+                    args;
+
+                if (typeof modules[moduleName] === 'function') {
+                    moduleInstance = modules[moduleName]($(this));
+
+                    if (typeof moduleInstance.init === 'function') {
+
+                        // remove the first argument (module name) and pass all the others to init
+                        args = Array.prototype.slice.call(arguments, 1);
+
+                        moduleInstance.init.apply(moduleInstance, args);
+                    } else {
+                        throw 'Module ' + moduleName + ' doesn\'t contain an init method';
+                    }
+                } else {
+                    throw 'Module ' + moduleName + ' doesn\'t exist or is not a valid function';
+                }
+            }
+        };
+    }());
+
+    win.PB = PB;
+
+}(window));

@@ -1,0 +1,16 @@
+(function (win) {
+    'use strict';
+
+    var $ = win.jQuery,
+        PB = win.PB;
+
+    $(function () {
+        PB.Core.start('sections-scroller');
+        PB.Core.start('sticky-element');
+
+        $('.js-alphabet-bar').stickify({
+            offsetTop : 62,
+            zIndex    : 2
+        });
+    });
+}(window));

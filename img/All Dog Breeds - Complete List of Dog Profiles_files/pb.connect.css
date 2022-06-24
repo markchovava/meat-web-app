@@ -1,0 +1,22 @@
+.connect-buttons,
+.connect-socials {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.connect-socials-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+.connect-socials {
+    width: 100%;
+}
+
+.connect-social {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}

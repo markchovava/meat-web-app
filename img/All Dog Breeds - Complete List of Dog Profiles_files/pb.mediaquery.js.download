@@ -1,0 +1,48 @@
+(function (win) {
+    'use strict';
+
+    var PB             = win.PB || {},
+        Modernizr      = win.Modernizr,
+        default_config = {};
+
+    var generateFunctionName = function (device) {
+        return 'is' + device.replace('-', ' ').capitalize().replace(' ', '');
+    };
+
+    String.prototype.capitalize = function () {
+        return this.replace(/(?:^|\s)\S/g, function (a) { return a.toUpperCase(); });
+    };
+
+    PB.MediaQuery = function (config) {
+        var _self = this;
+
+        default_config = config;
+
+        Object.getOwnPropertyNames(config).forEach(function (device) {
+            var function_name = generateFunctionName(device);
+
+            _self[device]        = config[device];
+            _self[function_name] = function () {
+                return (_self[device] !== undefined) ? Modernizr.mq(_self[device]) : false;
+            };
+        });
+    };
+
+    PB.MediaQuery.prototype.getCurrentDevice = function () {
+        var _self          = this,
+            current_device = '';
+
+        Object.getOwnPropertyNames(default_config).forEach(function (device) {
+            var function_name = generateFunctionName(device);
+
+            if (_self[function_name]()) {
+                current_device = device;
+            }
+        });
+
+        return current_device;
+    };
+
+    win.PB = PB;
+
+}(window));
